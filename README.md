@@ -60,12 +60,16 @@ cdk deploy OpensearchStack
 
 ## 📂 Project Structure
 ```
-├── app.py                   # CDK App entrypoint
-├── opensearch_stack.py     # CDK stack definition
-├── lambda.py               # Lambda handler logic
-├── common.py               # Shared utilities and config loader
-├── requirements.txt        # Python dependencies
-└── src/                    # Lambda code and .env
+├── app.py                 # CDK App entrypoint
+├── opensearch
+|   └──opensearch_stack.py # CDK stack definition
+└── src/                   # Lambda code and .env
+|   ├── .env               # environment variables
+|   ├── lambda.py          # Lambda handler logic
+|   ├── common.py          # Shared utilities and config loader
+|   └── requirements.txt   # lambda layer dependencies
+├── requirements-dev.txt   # CDK local development Python dependecies
+└── requirements.txt       # CDK deployment Python dependencies
 ```
 
 ---
