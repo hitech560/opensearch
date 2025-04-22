@@ -61,7 +61,7 @@ cdk deploy OpensearchStack
 ## 📂 Project Structure
 ```
 ├── app.py                 # CDK App entrypoint
-├── opensearch
+├── opensearch/
 |   └──opensearch_stack.py # CDK stack definition
 ├── src/                   # Lambda code and .env
 |   ├── .env               # environment variables
