@@ -10,13 +10,9 @@ from aws_cdk import (
     aws_lambda as _lambda,
     aws_logs as logs,
     aws_apigateway as apigateway,
-    # aws_apigatewayv2 as apigatewayv2,
-    # aws_apigatewayv2_integrations as integrations,
 )
 from constructs import Construct
 
-# This class is for ZiQueen Liu to create an ice-cream machine
-# WoXiangChiBingQiLing
 class OpensearchStack(Stack):
 
     def __init__(self, scope: Construct, construct_id: str,
@@ -26,26 +22,21 @@ class OpensearchStack(Stack):
                  **kwargs,
                  ) -> None:
         super().__init__(scope, construct_id, **kwargs)
-        #Super Idol de XiaoRong Dou Mei Ni De Tian
 
         # Setting up: 
         # Create IAM role for OpenSearch
         # and assign policies: AmazonS3FullAccess and AmazonESFullAccess
-        # I want to eat bingqiling 
         role = iam.Role(
             self, "data-lake-week-2-role",
             role_name=f"data-lake-week-2-role-{environment}",
             description="IAM role for Lambda to access OpenSearch, S3, etc.",
-            # assumed_by=iam.ServicePrincipal("es.amazonaws.com"),
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
-            #Bingqiling
             managed_policies=[
                 iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AWSLambdaBasicExecutionRole"),
                 iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AWSLambdaVPCAccessExecutionRole"),
                 iam.ManagedPolicy.from_aws_managed_policy_name("AmazonS3FullAccess"),
                 iam.ManagedPolicy.from_aws_managed_policy_name("AmazonESFullAccess"),
             ], 
-            # JiNiTaiMei
         )
 
         # Task 1: Creating an Amazon OpenSearch Service cluster
@@ -99,7 +90,6 @@ class OpensearchStack(Stack):
 
         # Task 2: Creating an S3 bucket with versioning and lifecycle rules
         # Create an S3 bucket for storing data :)
-        # The bucket name is bingqiling
         bucket = s3.Bucket(
             self, "OpensearchBucket",
             bucket_name=bucket_name,
@@ -130,7 +120,6 @@ class OpensearchStack(Stack):
                 "AccessLogsBucket", 
                 f"aws-controltower-{self.account}-{self.region}-s3-logs",
                 ),
-            # server_access_logs_expiration=Duration.days(30),
         )
         # Add bucket policy to allow OpenSearch to access the bucket
         bucket.add_to_resource_policy(
@@ -142,9 +131,7 @@ class OpensearchStack(Stack):
                 resources=[f"{bucket.bucket_arn}/*"],
             )
         )
-
         # Acknowledge  and suppress CDK warning for access logs policy
-        # I agree with the comment on line 116
         Annotations.of(bucket).acknowledge_warning(
             id="@aws-cdk/aws-s3:accessLogsPolicyNotAdded",
             message="Target logging bucket is imported and already has correct permissions"
@@ -200,15 +187,11 @@ class OpensearchStack(Stack):
         # Task 5: Create a REST API
         # create a REST API in Amazon API Gateway to receive data from the sensors
         # and send it to the Lambda function
-        # create post method for /sensor
-        # create a resource for /sensor
-        # create a method for POST
         api = apigateway.LambdaRestApi(
             self, "WaterTempApiV2",
             rest_api_name=f"water-temp-api-{environment}",
             description="API for water temperature sensor data",
             handler=lambda_function,
-            # protocol_type="HTTP",
             default_method_options={
                 "authorization_type": apigateway.AuthorizationType.NONE,
                 "api_key_required": False,
@@ -220,59 +203,3 @@ class OpensearchStack(Stack):
             ),
             proxy=True,
         )
-        # # create a resource for /sensor
-        # sensor_resource = api.root.add_resource("sensor")
-        # # create a method for POST
-        # sensor_resource.add_method(
-        #     "POST",
-        #     apigateway.LambdaIntegration(lambda_function),
-        #     request_models={
-        #         "application/json": apigateway.Model(
-        #             self, "SensorDataModel",
-        #             rest_api=api,
-        #             content_type="application/json",
-        #             schema=apigateway.JsonSchema(
-        #                 schema=apigateway.JsonSchemaVersion.DRAFT4,  # or DRAFT7
-        #                 type=apigateway.JsonSchemaType.OBJECT,
-        #                 properties={
-        #                     "sensorID": apigateway.JsonSchema(type=apigateway.JsonSchemaType.STRING),
-        #                     "temperature": apigateway.JsonSchema(type=apigateway.JsonSchemaType.NUMBER),
-        #                 },
-        #                 required=["sensorID", "temperature"],
-        #             ),
-        #         )
-        #     },
-        # )
-
-        # api = apigateway.LambdaRestApi(
-        #     self, "WaterTempApi",
-        #     rest_api_name=f"water-temp-api-{environment}",
-        #     description="API for water temperature sensor data",
-        #     # protocol_type="HTTP",
-        #     handler=lambda_function,
-        #     default_cors_preflight_options=apigateway.CorsOptions(
-        #         allow_methods=["POST"],
-        #         allow_origins=["*"],
-        #         max_age=Duration.seconds(3600)
-        #     )
-        # )
-
-        # api = apigatewayv2.HttpApi(
-        #     self, "WaterTempApi",
-        #     api_name=f"water-temp-api-{environment}",
-        #     description="API for water temperature sensor data",
-        #     cors_preflight=apigatewayv2.CorsPreflightOptions(
-        #         allow_methods=[apigatewayv2.CorsHttpMethod.POST],
-        #         allow_origins=["*"],
-        #         max_age=Duration.seconds(3600)
-        #     )
-        # )
-
-        # api.add_routes(
-        #     path="/sensor",
-        #     methods=[apigatewayv2.HttpMethod.POST],
-        #     integration=integrations.HttpLambdaIntegration(
-        #         "LambdaIntegration",
-        #         handler=lambda_function
-        #     )
-        # )

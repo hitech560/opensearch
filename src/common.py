@@ -3,7 +3,6 @@
 import os
 import boto3
 import logging
-# from dotenv import load_dotenv, set_key
 from pathlib import Path
 
 # Setup logger
