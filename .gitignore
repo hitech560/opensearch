@@ -10,8 +10,8 @@ __pycache__
 cdk.out
 requirements-dev.txt
 upload-data.zip
-# src/.env
 main.py
 # exercise_01.ipynb
 # aws_logo.svg
 # coursera.svg
+src/.env

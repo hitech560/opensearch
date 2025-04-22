@@ -7,6 +7,44 @@ This document outlines the technical design of a cloud-native data ingestion and
 
 ## 2. Architecture Components
 
+### High-Level Architecture Overview
+```
+┌─────────────────────────────────────────────┐
+│           External Sensor Clients           │
+│     (IoT devices / data sources via API)    │
+└─────────────────────────────────────────────┘
+                   │ POST /sensor
+                   ▼
+       ┌────────────────────────────┐
+       │  API Gateway (REST API)    │◄────────────────────────────────────┐
+       │  water-temp-api-{env}      │                                     │
+       └────────────────────────────┘                                     │
+                   │                                                      │
+                   ▼                                                      │
+       ┌────────────────────────────┐                                     │
+       │  AWS Lambda (Python 3.13)  │                                     │
+       │  water-temp-function-{env} │                                     │
+       └────────────────────────────┘                                     │
+                   │                                                      │
+                   ├──────────────> S3: Store JSON docs (raw ingest)      │
+                   │                   (data-lake-week2-{env})            │
+                   │                                                      │
+                   └──────────────> OpenSearch: Index documents           │
+                                       (water-temp-domain-{env})          │
+                                                                          │
+┌─────────────────────────────┐          ┌──────────────────────────────┐ │
+│     IAM Role (Lambda)       │◄────────► Grants access to S3 & ES      │ │
+│  data-lake-week-2-role-{env}│          └──────────────────────────────┘ │
+└─────────────────────────────┘                                           │
+                                                                          ▼
+                                                        ┌────────────────────────┐
+                                                        │ Kibana / OpenSearch UI │
+                                                        │ for analytics & search │
+                                                        └────────────────────────┘
+```
+
+<img src="./architecture.png" alt="Architechture Overview" width="50%">
+
 ### 2.1 API Gateway
 - **Service**: Amazon API Gateway (REST API)
 - **Endpoint**: `POST /sensor`
