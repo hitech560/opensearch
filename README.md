@@ -63,7 +63,7 @@ cdk deploy OpensearchStack
 ├── app.py                 # CDK App entrypoint
 ├── opensearch
 |   └──opensearch_stack.py # CDK stack definition
-└── src/                   # Lambda code and .env
+├── src/                   # Lambda code and .env
 |   ├── .env               # environment variables
 |   ├── lambda.py          # Lambda handler logic
 |   ├── common.py          # Shared utilities and config loader
